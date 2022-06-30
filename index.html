@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://www.gstatic.com/firebasejs/3.7.4/firebase.js"></script>
+    <script src="./keys.js"></script>
+
+    <title>Car Automated Parking</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+    body{
+        font-family: 'Bebas Neue', cursive;
+        min-height: 100vh;
+        text-align: center;
+    }
+    .slots{
+        display: flex;
+        justify-content: center;
+        /* align-items: center; */
+    }
+    .slot{
+        display: flex;
+        flex-direction: column;
+        height: 70vh;
+        width: 20vw;
+        border: solid 2px white;
+        margin: 5px;
+        color: aliceblue;
+        font-size: 2rem;
+        border: solid 1px black;
+        overflow: hidden;
+    }
+    img{
+        width: 70%;
+        position: relative;
+        z-index: 100;
+    }
+    .car{
+        position: relative;
+        top: 200px;
+        transition: all 2s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+    .status{
+        
+        position: relative;
+        bottom: -210px;
+        z-index: 101;
+    }
+    .slot-index{
+        color: brown;
+    }
+
+</style>
+<body>
+    <h1>Car Parking System</h1>
+    <br>
+    <div class="slots">
+        <div class="slot">
+            <div class="slot-index">Slot No. 1</div>
+            <div class="car"><img src="./car.jpg"></div>
+            <div class="status"></div>
+        </div>
+        <div class="slot">
+            <div class="slot-index">Slot No. 2</div>
+            <div class="car"><img src="./car.jpg"></div>
+            <div class="status"></div>
+            
+        </div>
+        <div class="slot">
+            <div class="slot-index">Slot No. 3</div>
+            <div class="car"><img src="./car.jpg"></div>
+            <div class="status"></div>
+            
+        </div>
+        <div class="slot">
+            <div class="slot-index">Slot No. 4</div>
+            <div class="car"><img src="./car.jpg"></div>
+            <div class="status"></div>
+
+        </div>
+    </div>
+
+    <script>
+          const firebaseConfig = {
+            apiKey: keys.firebase.apiKey,
+            authDomain: keys.firebase.authDomain,
+            databaseURL: keys.firebase.databaseURL,
+            projectId: keys.firebase.projectId,
+            storageBucket: keys.firebase.storageBucket,
+            messagingSenderId: keys.firebase.messagingSenderId,
+            appId: keys.firebase.appId,
+            measurementId: keys.firebase.measurementId
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        var allSlots = document.getElementsByClassName('slot');
+        var allCars = document.getElementsByClassName('car');
+        var allStatus = document.getElementsByClassName('status');
+
+        var slot1 = firebase.database().ref().child('slot1');
+        var slot2 = firebase.database().ref().child('slot2');
+        var slot3 = firebase.database().ref().child('slot3');
+        var slot4 = firebase.database().ref().child('slot4');
+
+        function occupy(i){
+            allStatus[i].innerHTML = "Occupied";
+            allStatus[i].style.backgroundColor = "red";
+            allCars[i].style.transform = "translateY(-120px)"
+        }
+        function vacate(i){
+            allStatus[i].innerHTML = "Vacant";
+            allStatus[i].style.backgroundColor = "green";
+            allCars[i].style.transform = "translateY(260px)"
+
+        }
+
+        slot1.on('value', (snap) =>{
+            if(snap.val() === 1){
+                occupy(0);
+            }
+            else{
+                vacate(0);
+            }
+        })
+        slot2.on('value', (snap) =>{
+            if(snap.val() === 1) occupy(1);
+            else vacate(1);
+        })
+        slot3.on('value', (snap) =>{
+            if(snap.val() === 1) occupy(2);
+            else vacate(2);
+        })
+        slot4.on('value', (snap) =>{
+            if(snap.val() === 1) occupy(3);
+            else vacate(3);    
+        })
+
+    </script>
+
+</body>
+
+</html>
